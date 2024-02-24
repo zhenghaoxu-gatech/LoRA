@@ -128,10 +128,10 @@ class Linear(nn.Linear, LoRALayer):
                 Phi = torch.randn_like(self.lora_B) / math.sqrt(self.r)
                 sketched_weight = self.weight.data @ Phi
                 U, S, V = torch.linalg.svd(sketched_weight)
-                self.lora_B.data = U
-                print(type(self.lora_B))
-                print(self.lora_B)
-                print('<<<<<<<<<< Linear weights size: ', self.weight.size(), 'sig B: ', S)
+                self.lora_B.data = U[:,:self.r]
+                # print(type(self.lora_B))
+                # print(self.lora_B)
+                # print('<<<<<<<<<< Linear weights size: ', self.weight.size(), 'sig B: ', S)
             else: 
                 # nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
                 nn.init.normal_(self.lora_B)
