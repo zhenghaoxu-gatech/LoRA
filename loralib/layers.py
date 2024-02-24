@@ -126,9 +126,11 @@ class Linear(nn.Linear, LoRALayer):
             # this is different than what is described in the paper but should not affect performance
             if self.column_init: 
                 Phi = torch.randn_like(self.lora_B) / math.sqrt(self.r)
+                sketched_weight = self.weight.data @ Phi
+                U, S, V = torch.linalg.svd(sketched_weight)
+                self.lora_B.data = U
                 print(type(self.lora_B))
-                self.lora_B.data = self.weight.data @ Phi
-                U, S, V = torch.linalg.svd(self.lora_B)
+                print(self.lora_B)
                 print('<<<<<<<<<< Linear weights size: ', self.weight.size(), 'sig B: ', S)
             else: 
                 # nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
