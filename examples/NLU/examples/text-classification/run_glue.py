@@ -549,7 +549,6 @@ def main():
         data_collator=data_collator,
     )
 
-    exit()
     # Training
     if training_args.do_train:
         checkpoint = None
