@@ -127,7 +127,7 @@ class Linear(nn.Linear, LoRALayer):
             if self.column_init: 
                 Phi = torch.randn_like(self.lora_B) / math.sqrt(self.r)
                 print(type(self.lora_B))
-                self.lora_B = self.weight @ Phi
+                self.lora_B.data = self.weight.data @ Phi
                 U, S, V = torch.linalg.svd(self.lora_B)
                 print('<<<<<<<<<< Linear weights size: ', self.weight.size(), 'sig B: ', S)
             else: 
