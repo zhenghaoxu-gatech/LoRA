@@ -101,7 +101,6 @@ class Linear(nn.Linear, LoRALayer):
         **kwargs
     ):
         nn.Linear.__init__(self, in_features, out_features, **kwargs)
-        print('<<<<<<<<<<<<<<<<<<<<<<', **kwargs)
         LoRALayer.__init__(self, r=r, lora_alpha=lora_alpha, lora_dropout=lora_dropout,
                            merge_weights=merge_weights)
 
@@ -122,6 +121,7 @@ class Linear(nn.Linear, LoRALayer):
         if hasattr(self, 'lora_A'):
             # initialize B the same way as the default for nn.Linear and A to zero
             # this is different than what is described in the paper but should not affect performance
+            print('<<<<<<<<<< Linear weights size: ', self.weight.size())
             nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
             nn.init.zeros_(self.lora_B)
 
