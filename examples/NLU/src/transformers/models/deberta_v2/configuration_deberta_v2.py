@@ -118,6 +118,7 @@ class DebertaV2Config(PretrainedConfig):
         pooler_hidden_act="gelu",
         cls_dropout=None,
         apply_lora=False,
+        column_init=False,
         lora_alpha=None,
         lora_r=None,
         reg_loss_wgt=0.0,
@@ -157,6 +158,7 @@ class DebertaV2Config(PretrainedConfig):
         self.pooler_hidden_act = pooler_hidden_act
         self.cls_dropout = cls_dropout
         self.apply_lora = apply_lora
+        self.column_init = column_init
         self.lora_alpha = lora_alpha
         self.lora_r = lora_r
         self.reg_loss_wgt = reg_loss_wgt
