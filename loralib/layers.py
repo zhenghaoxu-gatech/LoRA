@@ -105,7 +105,7 @@ class Linear(nn.Linear, LoRALayer):
     ):
         nn.Linear.__init__(self, in_features, out_features, **kwargs)
         LoRALayer.__init__(self, r=r, lora_alpha=lora_alpha, lora_dropout=lora_dropout,
-                           merge_weights=merge_weights)
+                           merge_weights=merge_weights, column_init=column_init)
 
         self.fan_in_fan_out = fan_in_fan_out
         # Actual trainable parameters
