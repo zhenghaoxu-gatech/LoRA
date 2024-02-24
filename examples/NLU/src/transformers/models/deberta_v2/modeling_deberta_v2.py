@@ -571,14 +571,14 @@ class DisentangledSelfAttention(torch.nn.Module):
         self.attention_head_size = getattr(config, "attention_head_size", _attention_head_size)
         self.all_head_size = self.num_attention_heads * self.attention_head_size
         if config.apply_lora:
-            self.query_proj = lora.Linear(config.hidden_size, self.all_head_size, r=config.lora_r, lora_alpha=config.lora_alpha, merge_weights=False)
+            self.query_proj = lora.Linear(config.hidden_size, self.all_head_size, r=config.lora_r, column_init=config.column_init, lora_alpha=config.lora_alpha, merge_weights=False)
         else:
             self.query_proj = nn.Linear(config.hidden_size, self.all_head_size, bias=True)
 
         self.key_proj = nn.Linear(config.hidden_size, self.all_head_size, bias=True)
 
         if config.apply_lora:
-            self.value_proj = lora.Linear(config.hidden_size, self.all_head_size, r=config.lora_r, lora_alpha=config.lora_alpha, merge_weights=False)
+            self.value_proj = lora.Linear(config.hidden_size, self.all_head_size, r=config.lora_r, column_init=config.column_init, lora_alpha=config.lora_alpha, merge_weights=False)
         else:
             self.value_proj = nn.Linear(config.hidden_size, self.all_head_size, bias=True)
 
