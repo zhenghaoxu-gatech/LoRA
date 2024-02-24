@@ -497,7 +497,7 @@ class PretrainedConfig(object):
             kwargs.pop(key, None)
 
         print('<<<<<<<<<<')
-        print(config)
+        print(type(config))
         logger.info("Model config %s", str(config))
         if return_unused_kwargs:
             return config, kwargs
