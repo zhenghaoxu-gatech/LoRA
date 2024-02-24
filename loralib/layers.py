@@ -122,7 +122,7 @@ class Linear(nn.Linear, LoRALayer):
             # initialize B the same way as the default for nn.Linear and A to zero
             # this is different than what is described in the paper but should not affect performance
             U, S, V = torch.linalg.svd(self.weight)
-            print('<<<<<<<<<< Linear weights size: ', self.weight.size(), 'singular values: ', S[self.r])
+            print('<<<<<<<<<< Linear weights size: ', self.weight.size(), 's: ', S[:self.r + 1])
             nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
             nn.init.zeros_(self.lora_B)
 
