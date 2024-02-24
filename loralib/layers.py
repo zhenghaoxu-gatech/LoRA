@@ -16,6 +16,7 @@ class LoRALayer():
         lora_alpha: int, 
         lora_dropout: float,
         merge_weights: bool,
+        column_init: bool,
     ):
         self.r = r
         self.lora_alpha = lora_alpha
@@ -27,6 +28,7 @@ class LoRALayer():
         # Mark the weight as unmerged
         self.merged = False
         self.merge_weights = merge_weights
+        self.column_init = column_init
 
 
 class Embedding(nn.Embedding, LoRALayer):
@@ -98,6 +100,7 @@ class Linear(nn.Linear, LoRALayer):
         lora_dropout: float = 0.,
         fan_in_fan_out: bool = False, # Set this to True if the layer to replace stores weight like (fan_in, fan_out)
         merge_weights: bool = True,
+        column_init: bool = True,
         **kwargs
     ):
         nn.Linear.__init__(self, in_features, out_features, **kwargs)
@@ -121,10 +124,15 @@ class Linear(nn.Linear, LoRALayer):
         if hasattr(self, 'lora_A'):
             # initialize B the same way as the default for nn.Linear and A to zero
             # this is different than what is described in the paper but should not affect performance
-            U, S, V = torch.linalg.svd(self.weight)
-            print('<<<<<<<<<< Linear weights size: ', self.weight.size(), 'lora size A: ', self.lora_A.size(), 'B: ', self.lora_B.size())
-            nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
-            nn.init.zeros_(self.lora_B)
+            if self.column_init: 
+                Phi = torch.randn_like(B) / math.sqrt(self.r)
+                B = self.weight @ Phi
+                U, S, V = torch.linalg.svd(B)
+                print('<<<<<<<<<< Linear weights size: ', self.weight.size(), 'sig B: ', S)
+            else: 
+                # nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
+                nn.init.normal_(self.lora_B)
+            nn.init.zeros_(self.lora_A)
 
     def train(self, mode: bool = True):
         def T(w):

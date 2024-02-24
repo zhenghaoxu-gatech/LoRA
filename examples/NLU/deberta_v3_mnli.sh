@@ -24,6 +24,7 @@ examples/text-classification/run_glue.py \
 --warmup_steps 1000 \
 --cls_dropout 0.15 \
 --apply_lora \
+--column_init \
 --lora_r 8 \
 --lora_alpha 16 \
 --seed 0 \
