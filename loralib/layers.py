@@ -41,6 +41,7 @@ class Embedding(nn.Embedding, LoRALayer):
         **kwargs
     ):
         nn.Embedding.__init__(self, num_embeddings, embedding_dim, **kwargs)
+        print('<<<<<<<<<<', **kwargs)
         LoRALayer.__init__(self, r=r, lora_alpha=lora_alpha, lora_dropout=0,
                            merge_weights=merge_weights)
         # Actual trainable parameters

@@ -1701,7 +1701,6 @@ class PreTrainedTokenizerBase(SpecialTokensMixin):
             else:
                 logger.info(f"loading file {file_path} from cache at {resolved_vocab_files[file_id]}")
 
-        print('<<<<<<<<<<', cls.__name__)
         return cls._from_pretrained(
             resolved_vocab_files, pretrained_model_name_or_path, init_configuration, *init_inputs, **kwargs
         )
