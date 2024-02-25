@@ -134,7 +134,7 @@ class Linear(nn.Linear, LoRALayer):
                 # print('<<<<<<<<<< Linear weights size: ', self.weight.size(), 'sig B: ', S)
             else: 
                 # nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
-                nn.init.normal_(self.lora_B)
+                nn.init.kaiming_normal_(self.lora_B)
             nn.init.zeros_(self.lora_A)
 
     def train(self, mode: bool = True):
