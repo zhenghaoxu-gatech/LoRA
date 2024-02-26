@@ -400,7 +400,7 @@ def main():
                     # print(m)
                     m.reset_lora()
             model.apply(init_col)
-            exit()
+            # exit()
 
     if model_args.apply_adapter:
         if model_args.adapter_path is not None:
