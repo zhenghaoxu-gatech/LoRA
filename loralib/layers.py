@@ -16,7 +16,7 @@ class LoRALayer():
         lora_alpha: int, 
         lora_dropout: float,
         merge_weights: bool,
-        column_init: bool,
+        column_init: str,
     ):
         self.r = r
         self.lora_alpha = lora_alpha
@@ -100,7 +100,7 @@ class Linear(nn.Linear, LoRALayer):
         lora_dropout: float = 0.,
         fan_in_fan_out: bool = False, # Set this to True if the layer to replace stores weight like (fan_in, fan_out)
         merge_weights: bool = True,
-        column_init: bool = True,
+        column_init: str = None,
         **kwargs
     ):
         nn.Linear.__init__(self, in_features, out_features, **kwargs)
@@ -124,7 +124,7 @@ class Linear(nn.Linear, LoRALayer):
         if hasattr(self, 'lora_A'):
             # initialize B the same way as the default for nn.Linear and A to zero
             # this is different than what is described in the paper but should not affect performance
-            if self.column_init: 
+            if self.column_init is not None: 
                 Phi = torch.randn_like(self.lora_B) / math.sqrt(self.r)
                 sketched_weight = self.weight.data @ Phi
                 U, S, V = torch.linalg.svd(sketched_weight)
@@ -141,18 +141,21 @@ class Linear(nn.Linear, LoRALayer):
         if hasattr(self, 'lora_A'):
             # initialize B the same way as the default for nn.Linear and A to zero
             # this is different than what is described in the paper but should not affect performance
-            if self.column_init: 
+            if self.column_init == 'column': 
                 with torch.no_grad():
                     Phi = torch.randn_like(self.lora_B) / math.sqrt(self.r)
                     sketched_weight = self.weight.data @ Phi
-                    Uw, Sw, Vw = torch.linalg.svd(self.weight.data)
-                    print(Sw[:self.r+4])
                     U, S, V = torch.linalg.svd(sketched_weight)
                 # self.lora_B.data.copy_(U[:,:self.r])
                 self.lora_B.data = U[:,:self.r] / math.sqrt(self.r)
                 # print('<<<<<', self.lora_B.norm(), self.lora_B.requires_grad)
                 # nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
                 # print(self.lora_A.norm(), self.lora_A.requires_grad, '>>>>>')
+                nn.init.zeros_(self.lora_A)
+            elif self.column_init == 'svd':
+                with torch.no_grad():
+                    Uw, Sw, Vw = torch.linalg.svd(self.weight.data)
+                self.lora_B.data = Uw[:,:self.r] / math.sqrt(self.r)
                 nn.init.zeros_(self.lora_A)
             else: 
                 nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))

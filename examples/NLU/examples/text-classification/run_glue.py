@@ -178,8 +178,8 @@ class ModelArguments:
         default=False,
         metadata={"help": "Whether to apply LoRA or not."},
     )
-    column_init: Optional[bool] = field(
-        default=False,
+    column_init: Optional[str] = field(
+        default=None,
         metadata={"help": "Use column initialization instead of Gaussian."},
     )
     lora_alpha: Optional[int] = field(
@@ -390,7 +390,7 @@ def main():
             model.load_state_dict(lora_state_dict, strict=False)
         trainable_params.append('lora')
         
-        if model_args.column_init:
+        if model_args.column_init is not None:
             # print('<<<<<<<<<<')
             # for name, layer in model.named_modules():
             #     if isinstance(layer, loralib.Linear):
@@ -400,7 +400,7 @@ def main():
                     # print(m)
                     m.reset_lora()
             model.apply(init_col)
-            exit()
+            # exit()
 
     if model_args.apply_adapter:
         if model_args.adapter_path is not None:
