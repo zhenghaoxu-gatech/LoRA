@@ -25,6 +25,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 import numpy as np
+import loralib
 from datasets import load_dataset, load_metric
 
 import transformers
@@ -392,7 +393,8 @@ def main():
         if model_args.column_init:
             print('<<<<<<<<<<')
             for name, layer in model.named_modules():
-                print(name, layer)
+                if isinstance(layer, loralib.Linear):
+                    print(name, layer)
             exit()
 
     if model_args.apply_adapter:
