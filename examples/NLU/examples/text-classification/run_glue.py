@@ -395,6 +395,11 @@ def main():
             for name, layer in model.named_modules():
                 if isinstance(layer, loralib.Linear):
                     print(name, layer.parameters())
+            def init_col(m):
+                if type(m) == loralib.Linear:
+                    print(m)
+                    m.reset_lora()
+            model.apply(init_col)
             exit()
 
     if model_args.apply_adapter:
