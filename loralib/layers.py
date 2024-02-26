@@ -141,7 +141,10 @@ class Linear(nn.Linear, LoRALayer):
         if hasattr(self, 'lora_A'):
             # initialize B the same way as the default for nn.Linear and A to zero
             # this is different than what is described in the paper but should not affect performance
-            if self.column_init == 'column': 
+            if self.column_init is None: 
+                nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
+                nn.init.zeros_(self.lora_B)
+            elif self.column_init == 'column': 
                 with torch.no_grad():
                     Phi = torch.randn_like(self.lora_B) / math.sqrt(self.r)
                     sketched_weight = self.weight.data @ Phi
@@ -158,8 +161,8 @@ class Linear(nn.Linear, LoRALayer):
                 self.lora_B.data = Uw[:,:self.r] / math.sqrt(self.r)
                 nn.init.zeros_(self.lora_A)
             else: 
-                nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
-                nn.init.zeros_(self.lora_B)
+                print("Warning: Column initialization method unspecified!")
+
 
     def train(self, mode: bool = True):
         def T(w):
