@@ -6,7 +6,6 @@ export output_dir="./mrpc_128"
 python -m torch.distributed.launch --nproc_per_node=$num_gpus \
 examples/text-classification/run_glue.py \
 --model_name_or_path microsoft/deberta-v3-base \
-# --lora_path mnli/pytorch_model_lora.bin \
 --task_name mrpc \
 --do_train \
 --do_eval \
@@ -37,7 +36,6 @@ examples/text-classification/run_glue.py \
 python -m torch.distributed.launch --nproc_per_node=$num_gpus \
 examples/text-classification/run_glue.py \
 --model_name_or_path microsoft/deberta-v3-base \
-# --lora_path mnli/pytorch_model_lora.bin \
 --task_name mrpc \
 --do_train \
 --do_eval \
