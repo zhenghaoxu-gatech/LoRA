@@ -129,13 +129,13 @@ class Linear(nn.Linear, LoRALayer):
                 sketched_weight = self.weight.data @ Phi
                 U, S, V = torch.linalg.svd(sketched_weight)
                 self.lora_B.data = U[:,:self.r]
+                nn.init.zeros_(self.lora_A)
                 # print(type(self.lora_B))
                 # print(self.lora_B)
                 # print('<<<<<<<<<< Linear weights size: ', self.weight.size(), 'sig B: ', S)
             else: 
-                # nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
-                nn.init.kaiming_normal_(self.lora_B)
-            nn.init.zeros_(self.lora_A)
+                nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
+                nn.init.zeros_(self.lora_B)
 
     def train(self, mode: bool = True):
         def T(w):
