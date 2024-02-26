@@ -394,7 +394,7 @@ def main():
             print('<<<<<<<<<<')
             for name, layer in model.named_modules():
                 if isinstance(layer, loralib.Linear):
-                    print(name, layer)
+                    print(name, layer.parameters())
             exit()
 
     if model_args.apply_adapter:
