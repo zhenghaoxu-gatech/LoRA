@@ -40,8 +40,8 @@ examples/text-classification/run_glue.py \
 --do_train \
 --do_eval \
 --max_seq_length 512 \
---per_device_train_batch_size 64 \
---per_device_eval_batch_size 64 \
+--per_device_train_batch_size 32 \
+--per_device_eval_batch_size 32 \
 --learning_rate 1e-4 \
 --num_train_epochs 8 \
 --output_dir $output_dir/model \
