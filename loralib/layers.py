@@ -142,14 +142,14 @@ class Linear(nn.Linear, LoRALayer):
             # initialize B the same way as the default for nn.Linear and A to zero
             # this is different than what is described in the paper but should not affect performance
             if self.column_init: 
-                Phi = torch.randn_like(self.lora_B) / math.sqrt(self.r)
-                sketched_weight = self.weight.data @ Phi
-                U, S, V = torch.linalg.svd(sketched_weight)
+                with torch.no_grad():
+                    Phi = torch.randn_like(self.lora_B) / math.sqrt(self.r)
+                    sketched_weight = self.weight.data @ Phi
+                    U, S, V = torch.linalg.svd(sketched_weight)
                 self.lora_B.data.copy_(U[:,:self.r])
-                # print(self.lora_B.requires_grad)
-                print('<<<<<', self.lora_B.norm())
+                print('<<<<<', self.lora_B.norm(), self.lora_B.requires_grad)
                 nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
-                print(self.lora_A.norm(), '>>>>>')
+                print(self.lora_A.norm(), self.lora_A.requires_grad, '>>>>>')
                 nn.init.zeros_(self.lora_A)
             else: 
                 nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
