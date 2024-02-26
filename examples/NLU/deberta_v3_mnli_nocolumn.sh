@@ -9,7 +9,8 @@ examples/text-classification/run_glue.py \
 --do_train \
 --do_eval \
 --max_seq_length 128 \
---per_device_train_batch_size 8 \
+--per_device_train_batch_size 128 \
+--per_device_eval_batch_size 128 \
 --learning_rate 1e-4 \
 --num_train_epochs 5 \
 --output_dir $output_dir/model \
