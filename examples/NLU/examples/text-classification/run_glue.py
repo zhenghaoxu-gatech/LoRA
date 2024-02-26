@@ -391,16 +391,16 @@ def main():
         trainable_params.append('lora')
         
         if model_args.column_init:
-            print('<<<<<<<<<<')
-            for name, layer in model.named_modules():
-                if isinstance(layer, loralib.Linear):
-                    print(name, layer.parameters())
+            # print('<<<<<<<<<<')
+            # for name, layer in model.named_modules():
+            #     if isinstance(layer, loralib.Linear):
+            #         print(name, layer.parameters())
             def init_col(m):
                 if type(m) == loralib.Linear:
-                    print(m)
+                    # print(m)
                     m.reset_lora()
             model.apply(init_col)
-            exit()
+            # exit()
 
     if model_args.apply_adapter:
         if model_args.adapter_path is not None:

@@ -146,7 +146,7 @@ class Linear(nn.Linear, LoRALayer):
                 sketched_weight = self.weight.data @ Phi
                 U, S, V = torch.linalg.svd(sketched_weight)
                 self.lora_B.data.copy_(U[:,:self.r])
-                print(self.lora_B.requires_grad)
+                # print(self.lora_B.requires_grad)
                 nn.init.zeros_(self.lora_A)
             else: 
                 nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
