@@ -145,6 +145,8 @@ class Linear(nn.Linear, LoRALayer):
                 with torch.no_grad():
                     Phi = torch.randn_like(self.lora_B) / math.sqrt(self.r)
                     sketched_weight = self.weight.data @ Phi
+                    Uw, Sw, Vw = torch.linalg.svd(self.weight.data)
+                    print(Sw[:self.r+4])
                     U, S, V = torch.linalg.svd(sketched_weight)
                 # self.lora_B.data.copy_(U[:,:self.r])
                 self.lora_B.data = U[:,:self.r] / math.sqrt(self.r)
