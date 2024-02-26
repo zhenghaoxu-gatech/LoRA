@@ -388,6 +388,11 @@ def main():
             logger.info(lora_state_dict.keys())
             model.load_state_dict(lora_state_dict, strict=False)
         trainable_params.append('lora')
+        
+        if model_args.column_init:
+            print('<<<<<<<<<<')
+            print(model.modules())
+            exit()
 
     if model_args.apply_adapter:
         if model_args.adapter_path is not None:
