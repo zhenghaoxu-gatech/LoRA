@@ -391,7 +391,8 @@ def main():
         
         if model_args.column_init:
             print('<<<<<<<<<<')
-            print(model.modules())
+            for name, layer in model.named_modules():
+                print(name, layer)
             exit()
 
     if model_args.apply_adapter:
