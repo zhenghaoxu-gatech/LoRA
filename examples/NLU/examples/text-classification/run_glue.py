@@ -76,7 +76,7 @@ class Trainer(transformers.Trainer):
             self.lr_scheduler = get_linear_schedule_with_cooldown(
                 # self.args.lr_scheduler_type,
                 optimizer=self.optimizer if optimizer is None else optimizer,
-                num_warmup_steps=self.args.get_warmup_steps(num_training_steps),
+                num_warmup_steps=self.args.warmup_steps,
                 num_training_steps=num_training_steps,
                 init_factor=1e4
                 # scheduler_specific_kwargs=self.args.lr_scheduler_kwargs,
