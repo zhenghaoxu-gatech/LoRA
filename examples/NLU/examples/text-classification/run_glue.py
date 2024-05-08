@@ -78,7 +78,7 @@ class MyTrainer(Trainer):
                 optimizer=self.optimizer if optimizer is None else optimizer,
                 num_warmup_steps=self.args.warmup_steps,
                 num_training_steps=num_training_steps,
-                init_factor=1e4
+                init_factor=1e3
                 # scheduler_specific_kwargs=self.args.lr_scheduler_kwargs,
             )
             self._created_lr_scheduler = True

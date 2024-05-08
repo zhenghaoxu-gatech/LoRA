@@ -26,7 +26,7 @@ examples/text-classification/run_glue.py \
 --eval_steps 500 \
 --save_strategy steps \
 --save_steps 500 \
---warmup_steps 1000 \
+--warmup_steps 10 \
 --cls_dropout 0.15 \
 --apply_lora \
 --column_init imbalance \
