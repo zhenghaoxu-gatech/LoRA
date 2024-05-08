@@ -39,7 +39,7 @@ from transformers import (
     EvalPrediction,
     HfArgumentParser,
     PretrainedConfig,
-    # Trainer,
+    Trainer,
     TrainingArguments,
     default_data_collator,
     set_seed,
@@ -48,7 +48,7 @@ from transformers.trainer_utils import get_last_checkpoint, is_main_process
 from transformers.utils import check_min_version
 
 
-class Trainer(transformers.Trainer):
+class MyTrainer(Trainer):
     def create_scheduler(self, num_training_steps: int, optimizer: torch.optim.Optimizer = None):
         """
         Setup the scheduler. The optimizer of the trainer must have been set up either before this method is called or
@@ -592,7 +592,7 @@ def main():
 
     # Initialize our Trainer
     if model_args.column_init == "imbalance": 
-        trainer = Trainer(
+        trainer = MyTrainer(
             model=model,
             args=training_args,
             train_dataset=train_dataset if training_args.do_train else None,
@@ -602,7 +602,7 @@ def main():
             data_collator=data_collator,
         )
     else:
-        trainer = transformers.Trainer(
+        trainer = Trainer(
             model=model,
             args=training_args,
             train_dataset=train_dataset if training_args.do_train else None,
