@@ -160,6 +160,9 @@ class Linear(nn.Linear, LoRALayer):
                     Uw, Sw, Vw = torch.linalg.svd(self.weight.data)
                 self.lora_B.data = Uw[:,:self.r] / math.sqrt(self.r)
                 nn.init.zeros_(self.lora_A)
+            elif self.column_init == 'imbalance': 
+                nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))*1e-4
+                nn.init.zeros_(self.lora_B)
             else: 
                 print("Warning: Column initialization method unspecified!")
 

@@ -6,13 +6,15 @@ metric = {
     'mnli': 'eval_accuracy',
     'cola': 'eval_matthews_correlation',
 }
-def plot_evaluation_accuracy(NLU_path, dataset, batch_size):
+def plot_evaluation_accuracy(NLU_path, dataset, batch_size, seed=0):
     # Construct path to trainer_state.json
     for init in [None, 'col', 'svd']:
         if init is None: 
             dataset_folder = f'{dataset}_{batch_size}'
         else:
             dataset_folder = f'{dataset}_{init}_{batch_size}'
+        if seed > 0:
+            dataset_folder = f'{dataset_folder}_{seed}'
         dataset_path = os.path.join(NLU_path, dataset_folder)
         trainer_state_path = os.path.join(dataset_path, 'model', 'trainer_state.json')
         
@@ -38,7 +40,7 @@ def plot_evaluation_accuracy(NLU_path, dataset, batch_size):
 base_path = os.getcwd()
 NLU_path = os.path.join(base_path, 'examples', 'NLU')
 # print(base_path)
-dataset = 'cola'
-batch_size = 64
+dataset = 'mnli'
+batch_size = 128
 
-plot_evaluation_accuracy(NLU_path, dataset, batch_size)
+plot_evaluation_accuracy(NLU_path, dataset, batch_size, 1)

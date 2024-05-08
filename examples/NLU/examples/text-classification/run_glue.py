@@ -23,6 +23,8 @@ import sys
 import torch
 from dataclasses import dataclass, field
 from typing import Optional
+from functools import partial
+from torch.optim.lr_scheduler import LambdaLR
 
 import numpy as np
 import loralib
@@ -37,7 +39,7 @@ from transformers import (
     EvalPrediction,
     HfArgumentParser,
     PretrainedConfig,
-    Trainer,
+    # Trainer,
     TrainingArguments,
     default_data_collator,
     set_seed,
@@ -46,6 +48,43 @@ from transformers.trainer_utils import get_last_checkpoint, is_main_process
 from transformers.utils import check_min_version
 
 
+class Trainer(transformers.Trainer):
+    def create_scheduler(self, num_training_steps: int, optimizer: torch.optim.Optimizer = None):
+        """
+        Setup the scheduler. The optimizer of the trainer must have been set up either before this method is called or
+        passed as an argument.
+
+        Args:
+            num_training_steps (int): The number of training steps to do.
+        """
+        def _get_linear_schedule_with_cooldown_lr_lambda(current_step: int, *, num_warmup_steps: int, num_training_steps: int, init_factor: float):
+            if current_step < num_warmup_steps:
+                return (1 - float(current_step) / float(max(1, num_warmup_steps)))*init_factor
+            return max(0.0, float(num_training_steps - current_step) / float(max(1, num_training_steps - num_warmup_steps)))
+
+
+        def get_linear_schedule_with_cooldown(optimizer, num_warmup_steps, num_training_steps, init_factor, last_epoch=-1):
+            lr_lambda = partial(
+                _get_linear_schedule_with_cooldown_lr_lambda,
+                num_warmup_steps=num_warmup_steps,
+                num_training_steps=num_training_steps,
+                init_factor=init_factor,
+            )
+            return LambdaLR(optimizer, lr_lambda, last_epoch)
+        
+        if self.lr_scheduler is None:
+            self.lr_scheduler = get_linear_schedule_with_cooldown(
+                # self.args.lr_scheduler_type,
+                optimizer=self.optimizer if optimizer is None else optimizer,
+                num_warmup_steps=self.args.get_warmup_steps(num_training_steps),
+                num_training_steps=num_training_steps,
+                init_factor=1e4
+                # scheduler_specific_kwargs=self.args.lr_scheduler_kwargs,
+            )
+            self._created_lr_scheduler = True
+        return self.lr_scheduler
+    
+    
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 check_min_version("4.4.0")
 
@@ -552,15 +591,26 @@ def main():
         data_collator = None
 
     # Initialize our Trainer
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_dataset if training_args.do_train else None,
-        eval_dataset=eval_dataset if training_args.do_eval else None,
-        compute_metrics=compute_metrics,
-        tokenizer=tokenizer,
-        data_collator=data_collator,
-    )
+    if model_args.column_init == "imbalance": 
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset if training_args.do_train else None,
+            eval_dataset=eval_dataset if training_args.do_eval else None,
+            compute_metrics=compute_metrics,
+            tokenizer=tokenizer,
+            data_collator=data_collator,
+        )
+    else:
+        trainer = transformers.Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset if training_args.do_train else None,
+            eval_dataset=eval_dataset if training_args.do_eval else None,
+            compute_metrics=compute_metrics,
+            tokenizer=tokenizer,
+            data_collator=data_collator,
+        )
 
     # Training
     if training_args.do_train:
