@@ -161,7 +161,8 @@ class Linear(nn.Linear, LoRALayer):
                 self.lora_B.data = Uw[:,:self.r] / math.sqrt(self.r)
                 nn.init.zeros_(self.lora_A)
             elif self.column_init == 'imbalance': 
-                nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))*1e-6
+                nn.init.kaiming_uniform_(self.lora_A, a=math.sqrt(5))
+                self.lora_A = self.lora_A*1e-6
                 nn.init.zeros_(self.lora_B)
             else: 
                 print("Warning: Column initialization method unspecified!")
