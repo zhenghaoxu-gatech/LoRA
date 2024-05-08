@@ -58,7 +58,7 @@ class MyTrainer(Trainer):
             num_training_steps (int): The number of training steps to do.
         """
         def _get_linear_schedule_with_cooldown_lr_lambda(current_step: int, *, num_warmup_steps: int, num_training_steps: int, init_factor: float):
-            if current_step < 1: 
+            if current_step < 10: 
                 return init_factor
             elif current_step < num_warmup_steps:
                 return float(current_step) / float(max(1, num_warmup_steps))
@@ -80,7 +80,7 @@ class MyTrainer(Trainer):
                 optimizer=self.optimizer if optimizer is None else optimizer,
                 num_warmup_steps=self.args.warmup_steps,
                 num_training_steps=num_training_steps,
-                init_factor=1e2
+                init_factor=1
                 # scheduler_specific_kwargs=self.args.lr_scheduler_kwargs,
             )
             self._created_lr_scheduler = True
